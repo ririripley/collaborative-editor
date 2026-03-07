@@ -15,10 +15,9 @@ Client applications in a collaborative editor need a reliable, low-latency local
 ### New Capabilities
 
 - `kv-store-core`: Core key-value store interface — get, set, delete, clear, iterate; supports arbitrarily large values via chunked or streaming storage
-- `kv-store-memory-index`: Compact in-memory key index that tracks key metadata (size, TTL, dirty flag) without holding full values in memory
 - `kv-store-persistence`: Hybrid persistent backend — small values store both data and metadata in SQLite; large values store metadata in SQLite and data on the File System; supports transactional write semantics with WAL
 - `kv-store-cache`: LRU in-memory cache layer that sits in front of the persistence backend to serve hot keys with minimal latency
-- `kv-store-availability`: High-availability strategy — multi-tab coordination, SharedWorker-based singleton store, and fallback degradation when primary backend is unavailable
+- `kv-store-availability`: High-availability strategy — graceful degradation when the primary backend is unavailable
 
 ### Modified Capabilities
 
