@@ -5,15 +5,15 @@ import SQLite
 
 let kvTable = Table("kv_store")
 
-let colKey            = Expression<String>("key")
-let colSize           = Expression<Int>("size")
-let colContentType    = Expression<String?>("content_type")
-let colCreatedAt      = Expression<Int64>("created_at")
-let colLastModifiedAt = Expression<Int64>("last_modified_at")
-let colLastAccessedAt = Expression<Int64>("last_accessed_at")
-let colAccessFreq     = Expression<Int>("access_frequency")
-let colBlobPath       = Expression<String?>("blob_path")
-let colData           = Expression<Data?>("data")
+let colKey:            SQLite.Expression<String>  = SQLite.Expression("key")
+let colSize:           SQLite.Expression<Int>     = SQLite.Expression("size")
+let colContentType:    SQLite.Expression<String?> = SQLite.Expression("content_type")
+let colCreatedAt:      SQLite.Expression<Int64>   = SQLite.Expression("created_at")
+let colLastModifiedAt: SQLite.Expression<Int64>   = SQLite.Expression("last_modified_at")
+let colLastAccessedAt: SQLite.Expression<Int64>   = SQLite.Expression("last_accessed_at")
+let colAccessFreq:     SQLite.Expression<Int>     = SQLite.Expression("access_frequency")
+let colBlobPath:       SQLite.Expression<String?> = SQLite.Expression("blob_path")
+let colData:           SQLite.Expression<Data?>   = SQLite.Expression("data")
 
 // MARK: - DatabaseManager
 

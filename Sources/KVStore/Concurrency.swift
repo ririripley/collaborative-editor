@@ -9,7 +9,7 @@ final class UnfairLock {
     private let _lock: AnyObject
 
     init() {
-        if #available(iOS 16, *) {
+        if #available(iOS 16, macOS 13, *) {
             _lock = OSAllocatedUnfairLockBox()
         } else {
             _lock = LegacyUnfairLockBox()
@@ -51,7 +51,7 @@ private final class LegacyUnfairLockBox: Lockable {
     }
 }
 
-@available(iOS 16, *)
+@available(iOS 16, macOS 13, *)
 private final class OSAllocatedUnfairLockBox: Lockable {
     let underlying = OSAllocatedUnfairLock()
 

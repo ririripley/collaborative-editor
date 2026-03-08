@@ -75,7 +75,7 @@ final class PersistentStore {
     func blobPath(for key: String) -> URL {
         let keyData = Data(key.utf8)
         let hash: String
-        if #available(iOS 13, *) {
+        if #available(iOS 13, macOS 10.15, *) {
             hash = SHA256.hash(data: keyData).map { String(format: "%02x", $0) }.joined()
         } else {
             // Fallback: simple hex of key bytes (not cryptographically safe, but unique enough)

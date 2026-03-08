@@ -1,4 +1,7 @@
 import Foundation
+#if canImport(UIKit)
+import UIKit
+#endif
 
 // MARK: - Node (Task 5.1)
 
@@ -119,12 +122,14 @@ final class MemoryCache {
     // MARK: - Task 5.10: memory warning
 
     private func registerMemoryWarning() {
+        #if canImport(UIKit)
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(handleMemoryWarning),
             name: UIApplication.didReceiveMemoryWarningNotification,
             object: nil
         )
+        #endif
     }
 
     @objc private func handleMemoryWarning() {

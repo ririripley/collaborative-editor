@@ -29,14 +29,14 @@ final class DiskEviction {
     // MARK: - Task 9.2: evictFromDiskIfNeeded
 
     func evictIfNeeded() {
-        try? semaphore.withAccess {
+        semaphore.withAccess {
             while (try? dbManager.db.scalar(kvTable.select(colSize.sum)) ?? 0) ?? 0 > maxDiskBytes {
                 guard let row = try? _lowestScoredRow() else { break }
                 let key = row[colKey]
                 if let blobPath = row[colBlobPath] {
                     try? FileManager.default.removeItem(atPath: blobPath)
                 }
-                try? dbManager.db.run(kvTable.filter(colKey == key).delete())
+                _ = try? dbManager.db.run(kvTable.filter(colKey == key).delete())
             }
         }
     }

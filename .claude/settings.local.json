@@ -6,7 +6,11 @@
       "Bash(openspec schemas --json)",
       "Bash(openspec schemas)",
       "Bash(openspec status:*)",
-      "Bash(openspec instructions:*)"
+      "Bash(openspec instructions:*)",
+      "Bash(head:*)",
+      "Bash(grep error::*)",
+      "Bash(grep DatabaseManager:*)",
+      "Bash(cd \"/Users/linkguo/Desktop/Collaborative Editor\" && swift test 2>&1)"
     ]
   }
 }

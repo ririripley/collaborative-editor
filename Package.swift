@@ -1,16 +1,17 @@
-// swift-tools-version:5.5
+// swift-tools-version:5.9
 import PackageDescription
 
 let package = Package(
     name: "KVStore",
     platforms: [
-        .iOS(.v12)
+        .iOS(.v12),
+        .macOS(.v10_15)
     ],
     products: [
         .library(name: "KVStore", targets: ["KVStore"])
     ],
     dependencies: [
-        .package(url: "https://github.com/stephencelis/SQLite.swift.git", from: "0.14.1")
+        .package(url: "https://github.com/stephencelis/SQLite.swift.git", exact: "0.15.3")
     ],
     targets: [
         .target(

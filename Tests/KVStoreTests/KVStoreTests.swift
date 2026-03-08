@@ -1,4 +1,7 @@
 import XCTest
+#if canImport(UIKit)
+import UIKit
+#endif
 @testable import KVStore
 
 final class KVStoreTests: XCTestCase {
@@ -51,14 +54,24 @@ final class KVStoreTests: XCTestCase {
         let key = "cached"
         try store.set(key: key, value: 42)
 
-        let countBefore = store.persistentStore.readAccessCount
-        let first: Int? = try store.get(key: key)   // cache miss → hits persistent store
-        let second: Int? = try store.get(key: key)  // cache hit  → must NOT hit persistent store
+        // Re-create store with same config: empty cache, value persisted in SQLite.
+        let config = KVStoreConfiguration(
+            maxMemoryBytes: 1024 * 1024,
+            maxMemoryEntries: 100,
+            maxDiskBytes: 10 * 1024 * 1024,
+            evictionPolicy: .lru,
+            blobDirectory: tempDir.appendingPathComponent("kv-blobs")
+        )
+        let freshStore = try KVStore(configuration: config)
+
+        let countBefore = freshStore.persistentStore.readAccessCount
+        let first: Int? = try freshStore.get(key: key)   // cache miss → hits persistent store
+        let second: Int? = try freshStore.get(key: key)  // cache hit  → must NOT hit persistent store
 
         XCTAssertEqual(first, 42)
         XCTAssertEqual(second, 42)
         // Exactly one persistent read should have occurred (the cache miss on the first get)
-        XCTAssertEqual(store.persistentStore.readAccessCount - countBefore, 1,
+        XCTAssertEqual(freshStore.persistentStore.readAccessCount - countBefore, 1,
                        "Second get should be served from cache, not persistent store")
     }
 
@@ -199,10 +212,12 @@ final class KVStoreTests: XCTestCase {
         try memStore.set(key: "largeish", value: String(repeating: "a", count: 200))
 
         // Simulate memory warning
+        #if canImport(UIKit)
         NotificationCenter.default.post(
             name: UIApplication.didReceiveMemoryWarningNotification,
             object: nil
         )
+        #endif
 
         // Store should still function (data is on disk)
         let keys = try memStore.allKeys()
@@ -280,7 +295,22 @@ final class KVStoreTests: XCTestCase {
         XCTAssertFalse(keys.isEmpty)
     }
 
-    // MARK: - Task 10.14: concurrency
+    // MARK: - Task 10.14: large value blob file exists on disk after set
+
+    func testLargeValueWrittenToBlobFile() throws {
+        let key = "largeBlob"
+        // 25 KB — exceeds the 20 KB threshold, so it must be written to the file system
+        let value = String(repeating: "z", count: 25 * 1024)
+        try store.set(key: key, value: value)
+
+        let blobURL = store.persistentStore.blobPath(for: key)
+        XCTAssertTrue(
+            FileManager.default.fileExists(atPath: blobURL.path),
+            "Expected a blob file at \(blobURL.path) after setting a value larger than 20 KB"
+        )
+    }
+
+    // MARK: - Task 10.15: concurrency
 
     func testConcurrentReadWriteNoCrash() throws {
         let group = DispatchGroup()
